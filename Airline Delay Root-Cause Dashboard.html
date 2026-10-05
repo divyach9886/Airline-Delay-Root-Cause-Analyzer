@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Airline Delay Root-Cause Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f7ff;--card:#fff;--ink:#0a1f44;--mut:#5b6b8a;--line:#dce6f8;--blue:#0b5fff;--b2:#4c8dff;--b3:#9cc1ff;--b4:#d6e6ff;--sky:#eaf2ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#071530;--card:#0d2147;--ink:#fff;--mut:#9fb2d6;--line:#1c3566;--sky:#12295a;--b4:#1c3566}}
+:root[data-theme="dark"]{--bg:#071530;--card:#0d2147;--ink:#fff;--mut:#9fb2d6;--line:#1c3566;--sky:#12295a;--b4:#1c3566}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:14px}
+.wrap{padding:20px clamp(14px,2.2vw,36px) 28px;display:flex;flex-direction:column;gap:16px}
+h1,h2,.num{font-family:Sora,system-ui,sans-serif}
+.grid{display:grid;gap:16px}.kpis{grid-template-columns:repeat(5,1fr)}.r3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-width:0;box-shadow:0 2px 10px rgba(11,95,255,.06)}
+.hero{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(120deg,#0a2a6e 0%,#0b5fff 60%,#6ea8ff 100%);color:#fff;display:grid;grid-template-columns:1.1fr 1fr;align-items:center;min-height:210px}
+.hero .tx{padding:26px 32px;z-index:2}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.8}
+h1{font-size:clamp(26px,3vw,40px);font-weight:800;margin:6px 0 8px;line-height:1.1}
+.hero p{margin:0;max-width:520px;opacity:.9;line-height:1.5}
+.hero svg{width:100%;height:100%;min-height:210px;display:block}
+.kpi .l{color:var(--mut);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.kpi .num{font-size:30px;font-weight:800;margin:4px 0 2px;color:var(--blue)}
+.kpi .n{color:var(--mut);font-size:12px}
+.kpi.k4{background:linear-gradient(135deg,var(--blue),#2a7bff);border:0}.kpi.k4 *{color:#fff!important}
+h2{font-size:16px;font-weight:600;margin:0 0 2px}.cap{color:var(--mut);font-size:12px;margin-bottom:10px}
+.row{display:grid;grid-template-columns:104px 1fr 54px;gap:8px;align-items:center;margin:6px 0;font-size:12.5px}
+.tr{height:11px;background:var(--sky);border-radius:6px;overflow:hidden}.fl{height:100%;border-radius:6px;background:var(--b2)}
+.row b{text-align:right;font-variant-numeric:tabular-nums}
+svg text{fill:var(--mut);font-family:Inter,sans-serif;font-size:10px}
+.legend div{display:flex;align-items:center;gap:8px;font-size:12.5px;margin:5px 0}.legend i{width:10px;height:10px;border-radius:3px}.legend b{margin-left:auto}
+.dw{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.ml{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ml div{background:var(--sky);border-radius:10px;padding:10px}.ml b{font-family:Sora;font-size:22px;color:var(--blue);display:block}.ml span{font-size:11px;color:var(--mut)}
+.ins{background:linear-gradient(100deg,#0a2a6e,#0b5fff);color:#fff;border:0}
+.ins .g{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:10px}
+.ins .g div{border-left:2px solid #9cc1ff;padding-left:10px;font-size:13px;line-height:1.45}.ins .g b{display:block;font-family:Sora;font-size:15px;margin-bottom:2px}
+.note{color:var(--mut);font-size:11px;margin-top:8px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.r3,.ins .g{grid-template-columns:1fr}.hero{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+
+<section class="hero">
+ <div class="tx"><div class="eyebrow">Airline Delay Root-Cause Analyzer</div><h1>Why flights run late</h1>
+ <p>171,666 carrier-airport-month records from 2013 to 2023: the causes, seasons, airlines and airports behind 11.4 million delayed arrivals.</p></div>
+ <svg viewBox="0 0 520 230" preserveAspectRatio="xMidYMid slice" aria-label="Airplane flying through clouds">
+  <defs><linearGradient id="fus" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#cfe0ff"/></linearGradient></defs>
+  <g fill="#fff" opacity=".18"><ellipse cx="60" cy="190" rx="90" ry="22"/><ellipse cx="150" cy="205" rx="110" ry="24"/><ellipse cx="470" cy="60" rx="80" ry="16"/><ellipse cx="410" cy="75" rx="60" ry="13"/></g>
+  <path d="M-10 215 C120 190 200 170 300 135" stroke="#fff" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round" fill="none" opacity=".7"/>
+  <g transform="translate(345 105) rotate(-22) scale(1.05)">
+   <path d="M-10 -8 L-95 -88 L-70 -92 L40 -14Z" fill="url(#fus)"/>
+   <path d="M-10 8 L-95 88 L-70 92 L40 14Z" fill="url(#fus)"/>
+   <path d="M-100 -2 L-128 -34 L-114 -34 L-80 -2Z" fill="#e4eeff"/><path d="M-100 2 L-128 34 L-114 34 L-80 2Z" fill="#e4eeff"/>
+   <path d="M-120 0 C-120 -9 -90 -11 20 -11 C95 -11 130 -4 145 0 C130 4 95 11 20 11 C-90 11 -120 9 -120 0Z" fill="url(#fus)"/>
+   <path d="M118 -5 C130 -4 138 -2 145 0 C138 2 130 4 118 5Z" fill="#0b5fff"/>
+   <ellipse cx="-30" cy="-50" rx="17" ry="6.5" fill="#bcd4ff"/><ellipse cx="-30" cy="50" rx="17" ry="6.5" fill="#bcd4ff"/>
+   <path d="M-120 -1 L10 -1" stroke="#0b5fff" stroke-width="2.5"/>
+  </g></svg>
+</section>
+
+<section class="grid kpis">
+ <div class="card kpi"><div class="l">Total Arriving Flights</div><div class="num">62.1M</div><div class="n">62,146,805 flights</div></div>
+ <div class="card kpi"><div class="l">Delayed 15+ Minutes</div><div class="num">11.38M</div><div class="n">11,375,095 flights</div></div>
+ <div class="card kpi"><div class="l">Total Delay Minutes</div><div class="num">726.8M</div><div class="n">726,758,355 minutes</div></div>
+ <div class="card kpi k4"><div class="l">Overall Delay Rate</div><div class="num">18.30%</div><div class="n">Delayed ÷ arriving flights</div></div>
+ <div class="card kpi"><div class="l">Records · Years</div><div class="num">171,666</div><div class="n">2013 – 2023 · 0 duplicates</div></div>
+</section>
+
+<section class="grid r3">
+ <div class="card"><h2>Delay Root Causes</h2><div class="cap">Share of recorded delay minutes</div><div class="dw"><div id="donut"></div><div class="legend" id="leg" style="flex:1;min-width:170px"></div></div></div>
+ <div class="card"><h2>Monthly Delay Rate</h2><div class="cap">Summer peak: June 22.67%, September low 14.17%</div><div id="monthly"></div></div>
+ <div class="card"><h2>Seasonal Delay Rate</h2><div class="cap">Summer is the worst season</div><div id="season"></div>
+  <div class="note">Winter 19.31% · Spring 17.32% · Autumn 14.82%</div></div>
+</section>
+
+<section class="grid r3">
+ <div class="card"><h2>Yearly Delay Rate</h2><div class="cap">2020 dipped to 9.21%; 2023 hit a high of 22.52%</div><div id="yearly"></div>
+  <div class="note">2013 covers only 2.6M flights (partial year in the data)</div></div>
+ <div class="card"><h2>Airline Delay Rates</h2><div class="cap">Five highest and five lowest of 21 carriers</div><div id="air"></div></div>
+ <div class="card"><h2>Airport Hotspots</h2><div class="cap">Top delay rates, airports with 10,000+ flights</div><div id="apt"></div></div>
+</section>
+
+<section class="grid" style="grid-template-columns:1fr 2fr">
+ <div class="card"><h2>High-Delay Prediction Model</h2><div class="cap">Logistic regression · high delay = 25%+ of flights late · chronological 80/20 split</div>
+  <div class="ml"><div><b>69.17%</b><span>Accuracy</span></div><div><b>0.58</b><span>Precision (high delay)</span></div><div><b>0.21</b><span>Recall (high delay)</span></div><div><b>0.31</b><span>F1 (high delay)</span></div></div>
+  <div class="note">Test set: 34,286 records. The model finds most normal cases (recall 0.92) but misses most high-delay ones.</div></div>
+ <div class="card ins"><h2 style="color:#fff">Key Insights</h2><div class="g">
+  <div><b>Rotation leads</b>Late aircraft causes 38.96% of delay minutes, ahead of carrier issues at 33.90%.</div>
+  <div><b>NAS is third</b>Air traffic / NAS accounts for 21.72%; weather only 5.25%.</div>
+  <div><b>Summer pressure</b>June (22.67%) and July (21.95%) are the worst months.</div>
+  <div><b>Budget carriers lag</b>F9 (25.14%), B6 (24.83%) and G4 (24.45%) lead; HA is lowest at 12.35%.</div>
+  <div><b>Hub hotspots</b>EWR (24.76%) and SFO (23.02%) top the large airports.</div></div>
+  <div class="note" style="color:#cfe0ff">Limitation: no maintenance-delay field exists, so maintenance delays are not measured directly.</div></div>
+</section>
+</div>
+<script>
+const $=i=>document.getElementById(i);
+const causes=[['Late Aircraft / Rotation',38.96,'#0b5fff'],['Carrier / Operational',33.90,'#4c8dff'],['Air Traffic / NAS',21.72,'#9cc1ff'],['Weather',5.25,'#0a2a6e'],['Security',0.17,'#7a8fb8']];
+let off=0,s='<svg width="150" height="150" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#eaf2ff" stroke-width="6"/>';
+causes.forEach(([n,v,c])=>{s+=`<circle cx="21" cy="21" r="15.9" fill="none" stroke="${c}" stroke-width="6" stroke-dasharray="${v} ${100-v}" stroke-dashoffset="${-off}" transform="rotate(-90 21 21)"/>`;off+=v});
+$('donut').innerHTML=s+'<text x="21" y="22" text-anchor="middle" style="font-size:5px;font-weight:700;fill:var(--ink)">726.8M</text><text x="21" y="27" text-anchor="middle" style="font-size:2.6px">delay minutes</text></svg>';
+$('leg').innerHTML=causes.map(([n,v,c])=>`<div><i style="background:${c}"></i>${n}<b>${v.toFixed(2)}%</b></div>`).join('');
+function line(id,labels,vals,min,max,fmt){const W=360,H=190,L=30,B=24,T=14,R=8,x=i=>L+i*(W-L-R)/(vals.length-1),y=v=>T+(max-v)/(max-min)*(H-T-B);
+ let g='';for(let t=min;t<=max;t+=(max-min)/4)g+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${L-4}" y="${y(t)+3}" text-anchor="end">${t.toFixed(0)}</text>`;
+ const p=vals.map((v,i)=>`${x(i)},${y(v)}`).join(' ');const mx=vals.indexOf(Math.max(...vals));
+ $(id).innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%">${g}<polygon points="${L},${H-B} ${p} ${x(vals.length-1)},${H-B}" fill="#0b5fff" opacity=".1"/><polyline points="${p}" fill="none" stroke="#0b5fff" stroke-width="2.5"/>`+
+ vals.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="${i==mx?4.5:3}" fill="${i==mx?'#0a2a6e':'#0b5fff'}"/>`).join('')+labels.map((l,i)=>`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${l}</text>`).join('')+`<text x="${x(mx)}" y="${y(vals[mx])-8}" text-anchor="middle" style="fill:var(--ink);font-weight:700">${vals[mx].toFixed(2)}%</text></svg>`}
+line('monthly',['J','F','M','A','M','J','J','A','S','O','N','D'],[18.23,18.38,17.01,17.01,17.97,22.67,21.95,20.04,14.17,15.21,15.07,21.21],10,25);
+line('yearly',['13','14','15','16','17','18','19','20','21','22','23'],[18.77,21.32,18.28,17.16,18.14,18.76,18.72,9.21,16.85,20.46,22.52],5,25);
+function bars(id,d,max,hi){$(id).innerHTML=d.map(([n,v],i)=>`<div class="row"><span>${n}</span><div class="tr"><div class="fl" style="width:${v/max*100}%;background:${i<hi?'#0b5fff':'#9cc1ff'}"></div></div><b>${v.toFixed(2)}%</b></div>`).join('')}
+bars('season',[['Summer',21.48],['Winter',19.31],['Spring',17.32],['Autumn',14.82]],25,1);
+bars('air',[['F9 Frontier',25.14],['B6 JetBlue',24.83],['G4 Allegiant',24.45],['NK Spirit',21.67],['VX',21.40],['QX',14.31],['DL Delta',13.84],['9E Endeavor',13.68],['HA',12.35]].filter((_,i)=>i<5||i>=5),28,3);
+bars('apt',[['BQN',31.54],['PGD',28.81],['SFB',27.15],['AZA',27.09],['TTN',26.13],['ASE',24.99],['EWR',24.76],['PIE',24.15],['SJU',23.45],['SFO',23.02]],34,3);
+</script></body></html>
